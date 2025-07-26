@@ -11,8 +11,8 @@ import { Fetcher } from "./Fetcher.js";
 
 const server = new Server(
   {
-    name: "zcaceres/fetch",
-    version: "1.0.1",
+    name: "mwhesse/fetch",
+    version: "1.0.3",
   },
   {
     capabilities: {
