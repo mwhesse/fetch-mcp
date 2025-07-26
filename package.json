@@ -1,13 +1,13 @@
 {
   "name": "fetch",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "",
   "type": "module",
   "main": "index.js",
   "license": "MIT",
   "author": "zcaceres (@zachcaceres zach.dev), mwhesse",
   "scripts": {
-    "build": "tsc && shx chmod +x dist/*.js",
+    "build": "tsc && shx chmod +x dist/*.js && echo \"Built: $(pwd)/dist/index.js\"",
     "prepare": "npm run build",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
