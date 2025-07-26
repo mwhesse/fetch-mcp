@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
-import is_ip_private from "private-ip";
+import { isPrivateUrl } from "is-private-host";
 import { RequestPayload } from "./types.js";
 
 export class Fetcher {
@@ -17,7 +17,7 @@ export class Fetcher {
     headers,
   }: RequestPayload): Promise<Response> {
     try {
-      if (is_ip_private(url)) {
+      if (await isPrivateUrl(url)) {
         throw new Error(
           `Fetcher blocked an attempt to fetch a private IP ${url}. This is to prevent a security vulnerability where a local MCP could fetch privileged local IPs and exfiltrate data.`,
         );
