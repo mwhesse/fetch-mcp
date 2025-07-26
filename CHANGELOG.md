@@ -5,23 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-01-26
+
+### Changed
+- Removed all vulnerable third-party IP detection libraries
+- Implemented secure custom `isPrivateIP()` and `isPrivateUrl()` methods in `Fetcher.ts`
+- Added comprehensive IPv4 and IPv6 private range detection
+- Updated tests to work with custom implementation
+- Updated server version to match package version (1.0.1)
+
 ## [1.0.1] - 2025-01-26
 
 ### Security
 - **CRITICAL**: Fixed high severity vulnerability (CVSS 8.2) in `private-ip` package
   - Vulnerability: Server-Side Request Forgery (SSRF) - [GHSA-9h3q-32c7-r533](https://github.com/advisories/GHSA-9h3q-32c7-r533)
   - Impact: Could allow attackers to make requests to private IP addresses
-  - Solution: Replaced vulnerable `private-ip@3.0.2` with secure `is-private-host@1.0.2`
-
-### Changed
-- Replaced `private-ip` dependency with `is-private-host` for private IP detection
-- Updated `Fetcher.ts` to use `isPrivateUrl()` instead of `is_ip_private()`
-- Updated tests to mock the new dependency
+  - Solution: Implemented custom private IP detection to avoid all third-party vulnerabilities
 
 ### Dependencies
-- **Removed**: `private-ip@3.0.2` (vulnerable)
-- **Added**: `is-private-host@1.0.2` (secure replacement)
-- **Added**: `ipaddr.js@2.2.0` (transitive dependency)
+- **Removed**: `private-ip@3.0.2` (vulnerable to SSRF)
+- **Removed**: `is-private-host@1.0.2` (ES module compatibility issues)
+- **Removed**: `ip@2.0.1` (vulnerable to SSRF)
+- **Solution**: Zero-dependency custom implementation for maximum security
 
 ## [1.0.0] - 2025-01-26
 

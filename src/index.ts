@@ -12,7 +12,7 @@ import { Fetcher } from "./Fetcher.js";
 const server = new Server(
   {
     name: "zcaceres/fetch",
-    version: "0.1.0",
+    version: "1.0.1",
   },
   {
     capabilities: {

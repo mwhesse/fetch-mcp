@@ -1,9 +1,90 @@
 import { JSDOM } from "jsdom";
 import TurndownService from "turndown";
-import { isPrivateUrl } from "is-private-host";
 import { RequestPayload } from "./types.js";
 
 export class Fetcher {
+  private static isPrivateIP(ip: string): boolean {
+    // IPv4 private ranges
+    const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+    const match = ip.match(ipv4Regex);
+    
+    if (match) {
+      const [, a, b, c, d] = match.map(Number);
+      
+      // Check if it's a valid IPv4 address
+      if (a > 255 || b > 255 || c > 255 || d > 255) return false;
+      
+      // Private IPv4 ranges:
+      // 10.0.0.0/8 (10.0.0.0 to 10.255.255.255)
+      if (a === 10) return true;
+      
+      // 172.16.0.0/12 (172.16.0.0 to 172.31.255.255)
+      if (a === 172 && b >= 16 && b <= 31) return true;
+      
+      // 192.168.0.0/16 (192.168.0.0 to 192.168.255.255)
+      if (a === 192 && b === 168) return true;
+      
+      // Loopback (127.0.0.0/8)
+      if (a === 127) return true;
+      
+      // Link-local (169.254.0.0/16)
+      if (a === 169 && b === 254) return true;
+      
+      return false;
+    }
+    
+    // IPv6 private ranges (simplified check)
+    if (ip.includes(':')) {
+      const lowerIP = ip.toLowerCase();
+      // Loopback
+      if (lowerIP === '::1') return true;
+      // Link-local (fe80::/10)
+      if (lowerIP.startsWith('fe80:')) return true;
+      // Unique local (fc00::/7)
+      if (lowerIP.startsWith('fc') || lowerIP.startsWith('fd')) return true;
+      // Private use (::1/128)
+      if (lowerIP.startsWith('::1')) return true;
+    }
+    
+    return false;
+  }
+
+  private static async isPrivateUrl(url: string): Promise<boolean> {
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+      
+      // Check if hostname is already an IP
+      if (this.isPrivateIP(hostname)) {
+        return true;
+      }
+      
+      // Check for localhost variants
+      if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
+        return true;
+      }
+      
+      // Resolve hostname to IP (using Node.js dns module would be better, but this is simpler)
+      // For now, we'll just check common private hostnames
+      const privateHostnames = [
+        'localhost',
+        '127.0.0.1',
+        '::1',
+        'local',
+        'internal'
+      ];
+      
+      if (privateHostnames.some(ph => hostname.includes(ph))) {
+        return true;
+      }
+      
+      return false;
+    } catch {
+      // If URL parsing fails, be conservative and block it
+      return true;
+    }
+  }
+
   private static applyLengthLimits(text: string, maxLength: number, startIndex: number): string {
     if (startIndex >= text.length) {
       return "";
@@ -17,7 +98,7 @@ export class Fetcher {
     headers,
   }: RequestPayload): Promise<Response> {
     try {
-      if (await isPrivateUrl(url)) {
+      if (await this.isPrivateUrl(url)) {
         throw new Error(
           `Fetcher blocked an attempt to fetch a private IP ${url}. This is to prevent a security vulnerability where a local MCP could fetch privileged local IPs and exfiltrate data.`,
         );

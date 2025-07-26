@@ -8,9 +8,6 @@ jest.mock("jsdom");
 
 jest.mock("turndown");
 
-jest.mock("is-private-host", () => ({
-  isPrivateUrl: jest.fn().mockResolvedValue(false),
-}));
 
 describe("Fetcher", () => {
   beforeEach(() => {
