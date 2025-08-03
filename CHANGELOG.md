@@ -5,12 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.3] - 2025-01-26
+## [1.0.4]
+
+### Changed
+- Updated Jest from 29.7.0 to 30.0.5 to resolve deprecated dependency warnings
+- Updated ts-jest from 29.2.5 to 29.4.0 for Jest 30 compatibility
+- Added npm overrides to force usage of non-deprecated versions:
+  - `glob` forced to ^10.4.5 (was 7.2.3 in deep dependencies)
+  - `inflight` replaced with `@isaacs/inflight` (original was deprecated and leaked memory)
+
+### Fixed
+- Resolved npm deprecation warnings for `inflight@1.0.6` and `glob@7.2.3`
+
+## [1.0.3]
 
 ### Changed
 - Updated MCP server version
 
-## [1.0.2] - 2025-01-26
+## [1.0.2]
 
 ### Changed
 - Removed all vulnerable third-party IP detection libraries
@@ -19,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated tests to work with custom implementation
 - Updated server version to match package version (1.0.1)
 
-## [1.0.1] - 2025-01-26
+## [1.0.1]
 
 ### Security
 - **CRITICAL**: Fixed high severity vulnerability (CVSS 8.2) in `private-ip` package
@@ -33,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Removed**: `ip@2.0.1` (vulnerable to SSRF)
 - **Solution**: Zero-dependency custom implementation for maximum security
 
-## [1.0.0] - 2025-01-26
+## [1.0.0]
 
 ### Added
 - Initial release of fetch-mcp
